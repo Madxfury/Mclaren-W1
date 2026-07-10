@@ -52,15 +52,15 @@ export default function Home() {
     if (hasStartedOnce) return;
     if (loadProgress >= actualProgress) return;
 
-    // Tick up slowly every 80ms to create an extra premium, dramatic loader sequence duration
+    // Tick up every 55ms to create a balanced, premium loading duration
     const timer = setTimeout(() => {
       setLoadProgress((prev) => {
         const remaining = actualProgress - prev;
-        // Paced step for longer diagnostic telemetry visualization
-        const step = Math.max(1, Math.floor(remaining * 0.03));
+        // Eased step for balanced telemetry diagnostic visualization
+        const step = Math.max(1, Math.floor(remaining * 0.05));
         return Math.min(prev + step, actualProgress);
       });
-    }, 80);
+    }, 55);
 
     return () => clearTimeout(timer);
   }, [loadProgress, actualProgress]);
