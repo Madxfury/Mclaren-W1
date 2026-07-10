@@ -1,65 +1,113 @@
-import Image from "next/image";
+"use client";
+
+import { useRef, useState, useEffect } from "react";
+import { useScroll, AnimatePresence } from "framer-motion";
+import Navbar from "@/components/Navbar";
+import McLarenW1ScrollCanvas from "@/components/McLarenW1ScrollCanvas";
+import McLarenW1Experience from "@/components/McLarenW1Experience";
+import SpecsGrid from "@/components/SpecsGrid";
+import Features from "@/components/Features";
+import Footer from "@/components/Footer";
+import InquireModal from "@/components/InquireModal";
+import ScrollProgress from "@/components/ScrollProgress";
+import TelemetryLoader from "@/components/TelemetryLoader";
 
 export default function Home() {
+  const containerRef = useRef<HTMLElement>(null);
+  const [isInquireOpen, setIsInquireOpen] = useState(false);
+  const [loadProgress, setLoadProgress] = useState(0); // Animated visual progress
+  const [actualProgress, setActualProgress] = useState(0); // Actual asset load progress
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Master Scroll Controller - 600vh total height
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
+
+  // Lock scrolling during preloading & reset scroll position on mount
+  useEffect(() => {
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+    window.scrollTo(0, 0);
+
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+    };
+  }, []);
+
+  // Smoothly interpolate loadProgress to actualProgress
+  useEffect(() => {
+    if (loadProgress >= actualProgress) return;
+
+    // Tick up 1-3% every 35ms to create a premium, paced loader feel (approx. 3-4s total duration)
+    const timer = setTimeout(() => {
+      setLoadProgress((prev) => {
+        const remaining = actualProgress - prev;
+        // Ease out slightly as we approach the actual loaded progress
+        const step = Math.max(1, Math.floor(remaining * 0.08));
+        return Math.min(prev + step, actualProgress);
+      });
+    }, 35);
+
+    return () => clearTimeout(timer);
+  }, [loadProgress, actualProgress]);
+
+  // Unlock scrolling once loaded
+  useEffect(() => {
+    if (isLoaded) {
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+    }
+  }, [isLoaded]);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="bg-mclaren-black min-h-screen">
+      <TelemetryLoader
+        progress={loadProgress}
+        isLoaded={isLoaded}
+        onStartEngine={() => setIsLoaded(true)}
+      />
+      
+      <Navbar onInquireClick={() => setIsInquireOpen(true)} />
+
+      <AnimatePresence>
+        {isInquireOpen && <InquireModal onClose={() => setIsInquireOpen(false)} />}
+      </AnimatePresence>
+
+      {/* SCROLL-LOCKED SEQUENCE */}
+      {/* 
+         Structure:
+         - containerRef: 600vh height to create scroll space
+         - sticky child: pinned to viewport for the duration
+         - canvas & HUD: render based on scrollYProgress from the container
+      */}
+      <section ref={containerRef} className="h-[600vh] relative">
+        <div className="sticky top-0 h-screen w-full overflow-hidden block">
+          <McLarenW1ScrollCanvas
+            scrollYProgress={scrollYProgress}
+            totalFrames={216}
+            imageFolderPath="/McLaren Frames"
+            onProgress={(p) => setActualProgress(p)}
+            onLoaded={() => {
+              // Handled by progress interpolation loop
+            }}
+          />
+          <McLarenW1Experience scrollYProgress={scrollYProgress} containerRef={containerRef} />
+          <ScrollProgress scrollYProgress={scrollYProgress} />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </section>
+
+      {/* POST-SEQUENCE CONTENT */}
+      <div className="relative z-20 bg-mclaren-black">
+        <SpecsGrid />
+        <Features />
+        <Footer />
+      </div>
+    </main >
   );
 }
