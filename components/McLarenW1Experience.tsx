@@ -24,6 +24,7 @@ export default function McLarenW1Experience({ scrollYProgress, containerRef }: M
     const [aeroAngle, setAeroAngle] = useState(4); // default wing angle
     const [telemetryState, setTelemetryState] = useState("SYS_NOMINAL"); // default HUD state
     const chatContainerRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
 
     // Auto-scroll chat container to bottom when messages arrive
     useEffect(() => {
@@ -31,6 +32,15 @@ export default function McLarenW1Experience({ scrollYProgress, containerRef }: M
             chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
         }
     }, [chatHistory, isLoading]);
+
+    // Automatically focus input when chat opens
+    useEffect(() => {
+        if (isChatOpen) {
+            setTimeout(() => {
+                inputRef.current?.focus();
+            }, 150);
+        }
+    }, [isChatOpen]);
 
     // Toggle Navbar visibility when chat is opened/closed to prevent overlaps
     useEffect(() => {
@@ -126,6 +136,9 @@ export default function McLarenW1Experience({ scrollYProgress, containerRef }: M
             ]);
         } finally {
             setIsLoading(false);
+            setTimeout(() => {
+                inputRef.current?.focus();
+            }, 50);
         }
     };
 
@@ -312,6 +325,7 @@ export default function McLarenW1Experience({ scrollYProgress, containerRef }: M
                             <div className="flex items-center gap-2 bg-white/5 border border-white/10 hover:border-white/20 focus-within:border-mclaren-orange/40 rounded-full px-4 py-2 transition-all">
                                 <span className="text-mclaren-orange font-bold text-[10px]">&gt;</span>
                                 <input
+                                    ref={inputRef}
                                     type="text"
                                     value={inputMessage}
                                     onChange={(e) => setInputMessage(e.target.value)}
