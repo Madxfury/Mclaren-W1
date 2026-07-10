@@ -1,41 +1,71 @@
-# 🏎️ McLaren W1 | The Ultimate Hybrid Hypercar Landing Experience
+# 🏎️ McLaren W1 
 
 An interactive, full-stack, and AI-driven landing page experience dedicated to the **McLaren W1**—the ultimate successor to the legendary F1 and P1 hypercars. Engineered with a Next.js backend, a localized RAG-based AI copilot, and a persistent lead management admin dashboard, this project is built to demonstrate high-performance web development patterns suitable for production.
 
 ---
 
-## 🚀 Key Highlights
+## 🚀 Key Features
 
-*   **🎬 Cinematic Interactive Scroll-Canvas**: Custom scroll-scrubbing framework syncing an 81-frame high-resolution 3D rotation sequence to the user's viewport progress. Features dynamic state transformations for active wings and aero components.
-*   **🤖 MARVIN AI Race Engineer (RAG)**: A custom-designed Retrieval-Augmented Generation terminal drawer. It parses technical document vectors locally, processes commands with Gemini LLM, configures wing angles/aero status, and automatically scrolls the user to target page sections.
-*   **📊 Showroom Leads Portal (Admin Dashboard)**: A full-stack lead management panel accessible at `/dashboard`. Features include inquiry record grids, search filters, key showroom performance metrics, and data purging triggers.
-*   **🔌 Zero-Dependency Fallback Engine**: Includes local offline keyword retrieval similarity scanners, allowing the chatbot to run fully and retrieve specifications without any external network connections.
-*   **🗺️ Satellite Showroom Locator**: Implements Leaflet.js maps loading dealer showroom geographic nodes, complete with sat-feed loaders and custom styles.
-*   **⚡ Serverless / Vercel Prepared**: Form submissions are backed by serverless write compatibility checking (routing local files dynamically to `/tmp/inquiries.json` in production to prevent read-only filesystem crash failures).
+- 🎬 **Interactive 3D Experience** – Scroll-driven animations with an 81-frame vehicle showcase and dynamic aero effects.
+- 🤖 **MARVIN AI Assistant** – AI-powered race engineer using Gemini with local RAG for technical questions and interactive navigation.
+- 📊 **Admin Dashboard** – Manage customer inquiries with search, filters, analytics, and lead management tools.
+- ⚡ **Offline AI Fallback** – Local knowledge base ensures the chatbot works even without an API connection.
+- 🗺️ **Showroom Locator** – Interactive dealership map built with Leaflet.
+- 🚀 **Deployment Ready** – Optimized for Vercel with serverless API routes and production-compatible data handling.
 
 ---
 
 ## 📸 Visual Previews
 
-### 🤖 MARVIN AI Race Engineer (RAG Chat Terminal)
-![MARVIN AI Terminal](public/screenshots/ai_terminal.png)
+### 🏎️ Home Page
+<img width="1298" height="735" alt="2026-07-10_16-15-52" src="https://github.com/user-attachments/assets/3133a9c7-ed14-4755-8d60-e2995919a1df" />
 
-### 📊 Showroom Leads Portal (Admin Dashboard)
-![Leads Dashboard](public/screenshots/leads_dashboard.png)
+
+### 🤖 MARVIN AI Race Engineer
+<img width="1321" height="757" alt="image" src="https://github.com/user-attachments/assets/65a91636-1ac4-40ed-bc72-dd04eed036b8" />
+
+
+### 📊 Showroom Leads Portal
+<img width="1289" height="516" alt="image" src="https://github.com/user-attachments/assets/79f00604-fbc6-4e9d-ade2-4bcf5e27efae" />
 
 ---
 
 ## 🛠️ Technology Stack
 
-| Category | Technologies Used |
-| :--- | :--- |
-| **Frontend Framework** | React 19, Next.js 16 (App Router), TypeScript |
-| **Animations / Motion** | Framer Motion (Scroll Scrubbing, Telemetry Transitions) |
-| **Styling** | CSS Variables (Carbon Theme), Tailwind CSS |
-| **AI / NLP** | Google Gemini API, Local Document Vector Search (RAG Pipeline) |
-| **Backend / API** | Next.js Serverless Route Handlers (GET, POST, DELETE) |
-| **Database** | Persistent JSON Database Store (Dynamic `/tmp` routing for Serverless) |
-| **Maps** | Leaflet.js, React Leaflet (Showroom Geospatial Mapping) |
+<table align="center">
+  <tr>
+    <th>Category</th>
+    <th>Technologies Used</th>
+  </tr>
+  <tr>
+    <td><strong>Frontend Framework</strong></td>
+    <td>React 19, Next.js 16 (App Router), TypeScript</td>
+  </tr>
+  <tr>
+    <td><strong>Animations / Motion</strong></td>
+    <td>Framer Motion (Scroll Scrubbing, Telemetry Transitions)</td>
+  </tr>
+  <tr>
+    <td><strong>Styling</strong></td>
+    <td>CSS Variables (Carbon Theme), Tailwind CSS</td>
+  </tr>
+  <tr>
+    <td><strong>AI / NLP</strong></td>
+    <td>Google Gemini API, Local Document Vector Search (RAG Pipeline)</td>
+  </tr>
+  <tr>
+    <td><strong>Backend / API</strong></td>
+    <td>Next.js Serverless Route Handlers (GET, POST, DELETE)</td>
+  </tr>
+  <tr>
+    <td><strong>Database</strong></td>
+    <td>Persistent JSON Database Store (Dynamic <code>/tmp</code> routing for Serverless)</td>
+  </tr>
+  <tr>
+    <td><strong>Maps</strong></td>
+    <td>Leaflet.js, React Leaflet (Showroom Geospatial Mapping)</td>
+  </tr>
+</table>
 
 ---
 
@@ -68,15 +98,7 @@ cd mclaren-w1-website
 ```bash
 npm install
 ```
-
-### 3. Environment Configuration
-Create a `.env.local` file in the root folder and add your Gemini API Key:
-```env
-GEMINI_API_KEY=your_gemini_api_key_here
-```
-*Note: If no API key is specified, the application automatically triggers the local offline similarity matching fallback database search, displaying database records natively.*
-
-### 4. Run Development Server
+### 3. Run Development Server
 ```bash
 npm run dev
 ```
@@ -89,16 +111,6 @@ Open [http://localhost:3000](http://localhost:3000) to view the homepage.
 1. Open the homepage, click the **INQUIRE** button in the header, and fill out a lead entry form.
 2. Navigate directly to **[http://localhost:3000/dashboard](http://localhost:3000/dashboard)** or click the **Leads Portal** button in the top navbar.
 3. The dashboard will load the persistent database logs, calculate summary cards, and allow you to filter entries or purge records.
-
----
-
-## ⚡ Deployment on Vercel
-
-This project is built to compile out-of-the-box on Vercel:
-
-1. Import your GitHub repository into the **Vercel Dashboard**.
-2. Add `GEMINI_API_KEY` under your environment variables settings.
-3. Click **Deploy**. The project will build cleanly, and all serverless API endpoints will run successfully.
 
 ---
 
