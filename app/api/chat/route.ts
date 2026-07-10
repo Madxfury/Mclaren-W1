@@ -44,7 +44,7 @@ export async function POST(req: Request) {
 
         if (apiKey) {
             // Live Gemini API call with retrieved RAG context injected
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${apiKey}`;
             
             const systemPrompt = `You are MARVIN (McLaren Adaptive Racing Virtual Intelligence Network), a highly advanced Formula 1 Race Engineer AI built by McLaren's Hypercar Division.
 Your goal is to assist the driver (the user) in customizing, configuring, and optimizing the setup of their McLaren W1 using exclusively the provided RAG Context.
