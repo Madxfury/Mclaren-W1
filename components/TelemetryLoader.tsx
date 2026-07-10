@@ -269,9 +269,11 @@ export default function TelemetryLoader({ progress, isLoaded, onStartEngine }: T
                             </div>
                         ) : (
                             <motion.button
+                                key="start-engine-btn"
                                 onClick={handleStartEngineClick}
-                                initial={{ scale: 0.9, opacity: 0 }}
+                                initial={{ scale: 0.95, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
+                                transition={{ duration: 0.35, ease: "easeOut" }}
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 className="pointer-events-auto px-8 py-3.5 bg-mclaren-orange text-black font-orbitron font-bold tracking-[0.25em] text-xs md:text-sm rounded-full shadow-2xl hover:bg-white hover:text-black transition-all duration-300 uppercase cursor-pointer"
