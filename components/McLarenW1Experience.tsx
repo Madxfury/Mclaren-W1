@@ -189,7 +189,7 @@ export default function McLarenW1Experience({ scrollYProgress, containerRef }: M
             {/* HERO PHASE */}
             <motion.div
                 style={{ opacity: heroOpacity }}
-                className="absolute inset-0 flex flex-col justify-between items-center text-center pt-16 pb-24 md:pt-4 md:pb-10"
+                className="absolute inset-0 flex flex-col justify-between items-center text-center pt-24 pb-24 md:pt-4 md:pb-10"
             >
                 <div>
                     <h1 className="text-4xl md:text-8xl font-bold tracking-tighter text-white uppercase drop-shadow-2xl">
@@ -250,7 +250,7 @@ export default function McLarenW1Experience({ scrollYProgress, containerRef }: M
             </motion.div>
 
             {/* BOTTOM RIGHT: Engage Marvin Button */}
-            <div className="absolute right-8 bottom-24 z-20 pointer-events-auto">
+            <div className="absolute right-4 md:right-8 bottom-24 z-20 pointer-events-auto">
                 <button
                     onClick={() => setIsChatOpen(true)}
                     className="px-4 py-2 border border-mclaren-orange/30 hover:border-mclaren-orange bg-black/40 hover:bg-mclaren-orange/15 text-white text-[10px] font-orbitron tracking-[0.2em] font-bold rounded-full transition-all duration-300 flex items-center gap-2 cursor-pointer shadow-[0_0_15px_rgba(255,135,0,0.1)]"

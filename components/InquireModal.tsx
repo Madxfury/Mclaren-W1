@@ -166,7 +166,7 @@ export default function InquireModal({ onClose }: InquireModalProps) {
             </button>
 
             {/* Left Panel: List & Search OR Details */}
-            <div className="w-full lg:w-1/3 flex flex-col border-r border-white/10 relative z-20 bg-mclaren-black h-full shadow-[20px_0_50px_rgba(0,0,0,0.5)]">
+            <div className="w-full lg:w-1/3 flex flex-col border-r border-white/10 relative z-20 bg-mclaren-black h-[50vh] lg:h-full shadow-[20px_0_50px_rgba(0,0,0,0.5)]">
                 {!selectedShowroom ? (
                     // VIEW 1: LIST & SEARCH
                     <div className="flex flex-col h-full p-8 lg:p-12">
@@ -305,7 +305,7 @@ export default function InquireModal({ onClose }: InquireModalProps) {
             </div>
 
             {/* Right Panel: Leaflet Map OR Enquiry Form Layer */}
-            <div className="w-full lg:w-2/3 h-full bg-[#0a0a0a] relative z-10">
+            <div className="w-full lg:w-2/3 h-[50vh] lg:h-full bg-[#0a0a0a] relative z-10">
                 {showEnquiryForm && selectedShowroom ? (
                     <div
                         className="absolute inset-0 z-50 bg-[#111] overflow-y-auto custom-scrollbar flex flex-col items-center overscroll-contain"
