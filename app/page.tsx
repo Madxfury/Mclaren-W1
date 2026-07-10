@@ -33,7 +33,7 @@ export default function Home() {
     if ("scrollRestoration" in window.history) {
       window.history.scrollRestoration = "manual";
     }
-    
+
     // Only lock and scroll to top on first startup
     if (!hasStartedOnce) {
       window.scrollTo(0, 0);
@@ -52,15 +52,15 @@ export default function Home() {
     if (hasStartedOnce) return;
     if (loadProgress >= actualProgress) return;
 
-    // Tick up every 35ms to create a fast, premium loading duration
+    // Tick up every 55ms to create a balanced, premium loading duration
     const timer = setTimeout(() => {
       setLoadProgress((prev) => {
         const remaining = actualProgress - prev;
-        // Eased step for responsive telemetry diagnostic visualization
-        const step = Math.max(1, Math.floor(remaining * 0.06));
+        // Eased step for balanced telemetry diagnostic visualization
+        const step = Math.max(1, Math.floor(remaining * 0.05));
         return Math.min(prev + step, actualProgress);
       });
-    }, 35);
+    }, 55);
 
     return () => clearTimeout(timer);
   }, [loadProgress, actualProgress]);
@@ -83,7 +83,7 @@ export default function Home() {
           setIsLoaded(true);
         }}
       />
-      
+
       <Navbar onInquireClick={() => setIsInquireOpen(true)} />
 
       <AnimatePresence>
