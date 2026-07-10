@@ -1,6 +1,10 @@
 # 🏎️ McLaren W1 
 
-An interactive, full-stack, and AI-driven landing page experience dedicated to the **McLaren W1**—the ultimate successor to the legendary F1 and P1 hypercars. Engineered with a Next.js backend, a localized RAG-based AI copilot, and a persistent lead management admin dashboard, this project is built to demonstrate high-performance web development patterns suitable for production.
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/2b4b6919-9efe-4b9e-bf60-06e3adbcaad2" alt="System Architecture" width="150">
+</p>
+
+A modern full-stack web experience inspired by the **McLaren W1**, built with **Next.js**, **React**, **TypeScript**, and **Gemini AI**. It features an immersive landing page, a RAG-powered AI assistant, an interactive showroom locator, and a lead management dashboard, showcasing production-ready web development practices.
 
 ---
 
