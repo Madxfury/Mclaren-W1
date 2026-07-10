@@ -55,7 +55,7 @@ export default function Navbar({ onInquireClick }: NavbarProps) {
                 <img
                     src="/mclaren-logo-full.png"
                     alt="McLaren"
-                    className="h-8 md:h-25 w-auto"
+                    className="h-12 md:h-25 w-auto"
                 />
             </button>
             <div className="flex items-center gap-3">
