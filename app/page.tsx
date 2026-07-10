@@ -12,12 +12,15 @@ import InquireModal from "@/components/InquireModal";
 import ScrollProgress from "@/components/ScrollProgress";
 import TelemetryLoader from "@/components/TelemetryLoader";
 
+// Persistent flag in client-side SPA navigation memory
+let hasStartedOnce = false;
+
 export default function Home() {
   const containerRef = useRef<HTMLElement>(null);
   const [isInquireOpen, setIsInquireOpen] = useState(false);
-  const [loadProgress, setLoadProgress] = useState(0); // Animated visual progress
-  const [actualProgress, setActualProgress] = useState(0); // Actual asset load progress
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [loadProgress, setLoadProgress] = useState(hasStartedOnce ? 100 : 0); // Animated visual progress
+  const [actualProgress, setActualProgress] = useState(hasStartedOnce ? 100 : 0); // Actual asset load progress
+  const [isLoaded, setIsLoaded] = useState(hasStartedOnce);
 
   // Master Scroll Controller - 600vh total height
   const { scrollYProgress } = useScroll({
@@ -30,10 +33,14 @@ export default function Home() {
     if ("scrollRestoration" in window.history) {
       window.history.scrollRestoration = "manual";
     }
-    window.scrollTo(0, 0);
+    
+    // Only lock and scroll to top on first startup
+    if (!hasStartedOnce) {
+      window.scrollTo(0, 0);
+      document.documentElement.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
+    }
 
-    document.documentElement.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
     return () => {
       document.documentElement.style.overflow = "";
       document.body.style.overflow = "";
@@ -42,6 +49,7 @@ export default function Home() {
 
   // Smoothly interpolate loadProgress to actualProgress
   useEffect(() => {
+    if (hasStartedOnce) return;
     if (loadProgress >= actualProgress) return;
 
     // Tick up 1-3% every 35ms to create a premium, paced loader feel (approx. 3-4s total duration)
@@ -70,7 +78,10 @@ export default function Home() {
       <TelemetryLoader
         progress={loadProgress}
         isLoaded={isLoaded}
-        onStartEngine={() => setIsLoaded(true)}
+        onStartEngine={() => {
+          hasStartedOnce = true;
+          setIsLoaded(true);
+        }}
       />
       
       <Navbar onInquireClick={() => setIsInquireOpen(true)} />
