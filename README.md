@@ -4,7 +4,7 @@
   <img src="https://github.com/user-attachments/assets/2b4b6919-9efe-4b9e-bf60-06e3adbcaad2" alt="System Architecture" width="150">
 </p>
 
-A modern full-stack web experience inspired by the **McLaren W1**, built with **Next.js**, **React**, **TypeScript**, and **Gemini AI**. It features an immersive landing page, a RAG-powered AI assistant, an interactive showroom locator, and a lead management dashboard, showcasing production-ready web development practices.
+A modern full-stack web experience inspired by the **McLaren W1**, built with **Next.js**, **React**, **TypeScript**. It features an immersive landing page, a RAG-powered AI assistant, an interactive showroom locator, and a lead management dashboard, showcasing production-ready web development practices.
 
 ---
 
