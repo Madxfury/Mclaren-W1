@@ -107,73 +107,53 @@ export default function McLarenW1ScrollCanvas({
 
     // Preload Images
     useEffect(() => {
+        let loadedCount = 0;
+        const imgArray: HTMLImageElement[] = [];
         const loadedFlags = new Array(totalFrames).fill(false);
         loadedImagesRef.current = loadedFlags;
 
         const loadImages = async () => {
-            const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
-            // On mobile, skip every second frame to cut payload size & network load in half
-            const skipStep = isMobile ? 2 : 1;
-            const uniqueFramesToLoad = isMobile ? Math.ceil(totalFrames / 2) : totalFrames;
-
-            const imgArray: HTMLImageElement[] = new Array(totalFrames);
-            let uniqueLoadedCount = 0;
-
             for (let i = 1; i <= totalFrames; i++) {
-                const isTargetFrame = (i - 1) % skipStep === 0;
-
-                if (isTargetFrame) {
-                    const img = new Image();
-                    img.src = `${imageFolderPath}/ezgif-frame-${i.toString().padStart(3, "0")}.jpg`;
+                const img = new Image();
+                img.src = `${imageFolderPath}/ezgif-frame-${i.toString().padStart(3, "0")}.jpg`;
+                
+                img.onload = () => {
+                    loadedCount++;
+                    loadedFlags[i - 1] = true;
                     
-                    img.onload = () => {
-                        uniqueLoadedCount++;
-                        
-                        // Fill target frame and propagate to skipped adjacent slots to maintain state
-                        for (let k = 0; k < skipStep; k++) {
-                            const targetIdx = i - 1 + k;
-                            if (targetIdx < totalFrames) {
-                                imgArray[targetIdx] = img;
-                                loadedFlags[targetIdx] = true;
-                            }
-                        }
-                        
-                        const progressPercent = Math.round((uniqueLoadedCount / uniqueFramesToLoad) * 100);
-                        if (onProgress) onProgress(progressPercent);
+                    const progressPercent = Math.round((loadedCount / totalFrames) * 100);
+                    if (onProgress) onProgress(progressPercent);
 
-                        // Render first frame immediately
-                        if (i === 1) {
-                            const canvas = canvasRef.current;
-                            if (canvas) {
-                                drawImageOnCanvas(canvas, img);
-                                lastDrawnFrameRef.current = 0;
-                            }
+                    // Render first frame immediately
+                    if (i === 1) {
+                        const canvas = canvasRef.current;
+                        if (canvas) {
+                            drawImageOnCanvas(canvas, img);
+                            lastDrawnFrameRef.current = 0;
                         }
+                    }
 
-                        if (uniqueLoadedCount === uniqueFramesToLoad) {
-                            setIsLoaded(true);
-                            if (onLoaded) onLoaded();
-                        }
-                    };
+                    if (loadedCount === totalFrames) {
+                        setIsLoaded(true);
+                        if (onLoaded) onLoaded();
+                    }
+                };
+                
+                img.onerror = () => {
+                    // Preload fallback to prevent hangs
+                    loadedCount++;
+                    loadedFlags[i - 1] = true; // Mark as loaded for fallback purposes
                     
-                    img.onerror = () => {
-                        uniqueLoadedCount++;
-                        for (let k = 0; k < skipStep; k++) {
-                            const targetIdx = i - 1 + k;
-                            if (targetIdx < totalFrames) {
-                                loadedFlags[targetIdx] = true;
-                            }
-                        }
-                        
-                        const progressPercent = Math.round((uniqueLoadedCount / uniqueFramesToLoad) * 100);
-                        if (onProgress) onProgress(progressPercent);
-                        
-                        if (uniqueLoadedCount === uniqueFramesToLoad) {
-                            setIsLoaded(true);
-                            if (onLoaded) onLoaded();
-                        }
-                    };
-                }
+                    const progressPercent = Math.round((loadedCount / totalFrames) * 100);
+                    if (onProgress) onProgress(progressPercent);
+                    
+                    if (loadedCount === totalFrames) {
+                        setIsLoaded(true);
+                        if (onLoaded) onLoaded();
+                    }
+                };
+                
+                imgArray.push(img);
             }
             setImages(imgArray);
         };
