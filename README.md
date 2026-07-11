@@ -75,16 +75,7 @@ A modern full-stack web experience inspired by the **McLaren W1**, built with **
 
 ## 📂 System Architecture
 
-### 1. MARVIN AI RAG Pipeline
-*   **Documents Store**: [marvinKnowledgeBase.ts](file:///Users/sanskarparab/McLaren%20W1%20Website/data/marvinKnowledgeBase.ts) contains technical specifications of the McLaren W1 split into contextual text chunks.
-*   **Retrieval Route**: [route.ts](file:///Users/sanskarparab/McLaren%20W1%20Website/app/api/chat/route.ts) scans query content against document keywords.
-*   **Augmentation**: Injects the best matching technical block directly into the system context under a `RETRIEVED DATA CONTEXT (RAG):` node before querying the LLM.
-*   **HUD Command Parsing**: Returns structured data commands instructing the UI client to update aero properties (e.g. `aeroAngle: 25`, `telemetryState: "TRACK_READY"`) and scrolls the browser to corresponding detail page cards.
-
-### 2. Lead Management DB
-*   **Modal Form**: [InquireModal.tsx](file:///Users/sanskarparab/McLaren%20W1%20Website/components/InquireModal.tsx) collects purchasing name, email, contact codes, message text, and showroom dealer metadata.
-*   **API Handlers**: [route.ts](file:///Users/sanskarparab/McLaren%20W1%20Website/app/api/inquire/route.ts) implements leads queries and deletes.
-*   **Vercel / Production Bypass**: Checks environment tags; swaps local file pathing out for `/tmp/inquiries.json` under production builds, completely bypassing the Vercel read-only filesystem limit.
+<img width="5316" height="1959" alt="image" src="https://github.com/user-attachments/assets/c0975b38-fd3b-4c71-8b56-07e2f1aa8b07" />
 
 ---
 
