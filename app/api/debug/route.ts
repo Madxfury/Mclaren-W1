@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 
 export async function GET() {
-    const key = process.env.GEMINI_API_KEY;
+    const geminiKey = process.env.GEMINI_API_KEY;
+    const groqKey = process.env.GROQ_API_KEY;
     
-    let testResult = null;
-    if (key) {
+    let geminiTestResult = null;
+    if (geminiKey) {
         try {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${key}`;
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${geminiKey}`;
             const res = await fetch(url, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -17,18 +18,47 @@ export async function GET() {
             const status = res.status;
             const ok = res.ok;
             const text = await res.text();
-            testResult = { ok, status, text };
+            geminiTestResult = { ok, status, text };
         } catch (err: any) {
-            testResult = { error: err.message };
+            geminiTestResult = { error: err.message };
+        }
+    }
+
+    let groqTestResult = null;
+    if (groqKey) {
+        try {
+            const url = "https://api.groq.com/openai/v1/chat/completions";
+            const res = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${groqKey}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    model: "llama-3.3-70b-versatile",
+                    messages: [{ role: "user", content: "say hello" }],
+                    max_tokens: 10
+                })
+            });
+            const status = res.status;
+            const ok = res.ok;
+            const text = await res.text();
+            groqTestResult = { ok, status, text };
+        } catch (err: any) {
+            groqTestResult = { error: err.message };
         }
     }
 
     return NextResponse.json({
-        geminiKeyExists: !!key,
-        geminiKeyLength: key ? key.length : 0,
-        geminiKeyPrefix: key ? key.substring(0, 5) + "..." : "none",
+        geminiKeyExists: !!geminiKey,
+        geminiKeyLength: geminiKey ? geminiKey.length : 0,
+        geminiKeyPrefix: geminiKey ? geminiKey.substring(0, 5) + "..." : "none",
+        groqKeyExists: !!groqKey,
+        groqKeyLength: groqKey ? groqKey.length : 0,
+        groqKeyPrefix: groqKey ? groqKey.substring(0, 5) + "..." : "none",
         nodeEnv: process.env.NODE_ENV,
         isVercel: !!process.env.VERCEL,
-        apiTestCall: testResult
+        geminiApiTest: geminiTestResult,
+        groqApiTest: groqTestResult
     });
 }

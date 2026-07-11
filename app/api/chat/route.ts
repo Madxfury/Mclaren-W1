@@ -40,13 +40,10 @@ export async function POST(req: Request) {
         // Execute RAG Retrieval
         const { contextText, matchedCategory, matchedChunkTitle, score } = retrieveContext(userMessage);
 
-        const apiKey = process.env.GEMINI_API_KEY;
+        const groqKey = process.env.GROQ_API_KEY;
+        const geminiKey = process.env.GEMINI_API_KEY;
 
-        if (apiKey) {
-            // Live Gemini API call with retrieved RAG context injected
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${apiKey}`;
-            
-            const systemPrompt = `You are MARVIN (McLaren Adaptive Racing Virtual Intelligence Network), a highly advanced Formula 1 Race Engineer AI built by McLaren's Hypercar Division.
+        const systemPrompt = `You are MARVIN (McLaren Adaptive Racing Virtual Intelligence Network), a highly advanced Formula 1 Race Engineer AI built by McLaren's Hypercar Division.
 Your goal is to assist the driver (the user) in customizing, configuring, and optimizing the setup of their McLaren W1 using exclusively the provided RAG Context.
 
 Respond in a professional, technical, and high-performance racing tone. Use telemetry terminology (downforce, drag, slipstream, torque fill, active long tail, etc.).
@@ -72,40 +69,86 @@ RETRIEVED DATA CONTEXT (RAG):
 Document Title: ${matchedChunkTitle}
 ${contextText}`;
 
-            const response = await fetch(url, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    contents: [
-                        {
-                            role: "user",
-                            parts: [
-                                { text: `System Instruction: ${systemPrompt}` },
-                                { text: `User request: ${userMessage}` }
-                            ]
-                        }
-                    ],
-                    generationConfig: {
-                        responseMimeType: "application/json"
-                    }
-                })
-            });
+        if (groqKey) {
+            try {
+                // Call Groq OpenAI-compatible chat completion endpoint
+                const url = "https://api.groq.com/openai/v1/chat/completions";
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${groqKey}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        model: "llama-3.3-70b-versatile",
+                        messages: [
+                            { role: "system", content: systemPrompt },
+                            { role: "user", content: userMessage }
+                        ],
+                        response_format: { type: "json_object" }
+                    })
+                });
 
-            if (response.ok) {
-                const data = await response.json();
-                const textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                if (textResponse) {
-                    try {
-                        const jsonResponse = JSON.parse(textResponse);
-                        return NextResponse.json(jsonResponse);
-                    } catch (parseError) {
-                        console.error("Failed to parse Gemini structured JSON:", parseError, textResponse);
+                if (response.ok) {
+                    const data = await response.json();
+                    const textResponse = data.choices?.[0]?.message?.content;
+                    if (textResponse) {
+                        try {
+                            const jsonResponse = JSON.parse(textResponse);
+                            return NextResponse.json(jsonResponse);
+                        } catch (parseError) {
+                            console.error("Failed to parse Groq structured JSON:", parseError, textResponse);
+                        }
                     }
+                } else {
+                    console.error("Groq API error:", await response.text());
                 }
-            } else {
-                console.error("Gemini API error:", await response.text());
+            } catch (err) {
+                console.error("Groq call failed:", err);
+            }
+        }
+
+        if (geminiKey) {
+            try {
+                // Live Gemini API call with retrieved RAG context injected
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${geminiKey}`;
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        contents: [
+                            {
+                                role: "user",
+                                parts: [
+                                    { text: `System Instruction: ${systemPrompt}` },
+                                    { text: `User request: ${userMessage}` }
+                                ]
+                            }
+                        ],
+                        generationConfig: {
+                            responseMimeType: "application/json"
+                        }
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (textResponse) {
+                        try {
+                            const jsonResponse = JSON.parse(textResponse);
+                            return NextResponse.json(jsonResponse);
+                        } catch (parseError) {
+                            console.error("Failed to parse Gemini structured JSON:", parseError, textResponse);
+                        }
+                    }
+                } else {
+                    console.error("Gemini API error:", await response.text());
+                }
+            } catch (err) {
+                console.error("Gemini call failed:", err);
             }
         }
 
